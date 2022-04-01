@@ -1,0 +1,23 @@
+.cart {
+	/* top | right | bottom | left */
+
+	margin: 0 14vw 0 8vw;
+	color: #1d1f22;
+
+	.cart-title {
+		margin: 0;
+		margin-bottom: 60px;
+		font-family: 'Raleway';
+		font-style: normal;
+		font-weight: 700;
+		font-size: 32px;
+		line-height: 40px;
+		/* identical to box height, or 125% */
+
+		text-transform: uppercase;
+	}
+}
+
+// * {
+// 	outline: 1px solid #f00 !important;
+// }

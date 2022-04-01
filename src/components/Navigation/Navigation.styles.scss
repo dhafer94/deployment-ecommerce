@@ -1,0 +1,107 @@
+.navbar {
+	position: static;
+	height: 3.5rem;
+	display: flex;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	/* top | horizontal | bottom */
+	padding: 1.8vh 8vw 8vh;
+	z-index: 9;
+	// border: 1px solid #000;
+	// flex-direction: row;
+	// overflow-y: visible;
+
+	& .navbar-categories-links {
+		/* Navigation */
+		/* Auto layout */
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		justify-content: space-between;
+		width: 14.6rem;
+		list-style: none;
+		// border: 1px solid #000;
+		text-decoration: none;
+
+		.navbar-categories-link {
+			text-decoration: none;
+			font-weight: 600;
+			font-size: 16px;
+			align-items: center;
+			text-align: center;
+			text-transform: uppercase;
+			color: #000;
+		}
+		& .active-style {
+			@extend .navbar-categories-link;
+			padding-bottom: 30px;
+			border-bottom: 2px solid #5ece7b;
+			color: #5ece7b;
+		}
+	}
+
+	& .navbar-logo {
+		/* a-logo */
+		width: 41px;
+		height: 3.5rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	& .navbar-actions {
+		/* Actions */
+		/* Auto layout */
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+		padding: 0px;
+		width: 204px;
+		height: 3.5rem;
+		/* Actions */
+
+		/* Auto layout */
+
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+		padding: 0px;
+
+		position: relative;
+		width: 204px;
+		height: 40px;
+		right: 101px;
+		top: 23px;
+
+		& .navbar-cart {
+			/* Inside auto layout */
+			// position: relative;
+			flex: none;
+			order: 3;
+			flex-grow: 0;
+			margin: 0px 22px;
+			cursor: pointer;
+
+			& .cart-number {
+				font-family: 'Roboto';
+				font-style: normal;
+				font-weight: 700;
+				text-transform: uppercase;
+				color: #fff;
+				background: #000;
+				border-radius: 50%;
+				text-align: center;
+				width: 20px;
+				height: 20px;
+				position: absolute;
+				left: 85s.5%;
+				right: 5%;
+				top: -1%;
+				color: #ffffff;
+			}
+		}
+	}
+}

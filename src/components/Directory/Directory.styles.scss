@@ -1,0 +1,40 @@
+.category-name {
+	// position: absolute;
+	width: fit-content;
+	height: 4.25rem;
+	// margin-left: ;
+	/* Heading / Desktop / H2 */
+	// border: 1px solid #000;
+
+	// font-family: Raleway;
+	font-style: normal;
+	font-weight: 400;
+	font-size: 40px;
+	line-height: 160%;
+	text-transform: capitalize;
+
+	/* identical to box height, or 67px */
+
+	display: flex;
+	align-items: center;
+
+	/* --c-text */
+	color: #1d1f22;
+	margin: 0 8vw 5vh;
+	// padding: 1.8vh 8vw 11vh;
+}
+.directory-container {
+	display: grid;
+	// grid-template-columns: 1fr 1fr 1fr;
+	grid-template-columns: repeat(auto-fill, minmax(24.3vw, 1fr));
+	justify-content: center;
+	text-align: center;
+	gap: 40px;
+	margin: 0 8vw;
+	// margin-left: 8vw;
+	// margin-right: 8vw;
+
+	align-self: right;
+	// width: auto;
+	// border: 1px solid #000;
+}

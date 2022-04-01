@@ -1,0 +1,50 @@
+.currency-container {
+	position: relative;
+	padding-right: 20px;
+	background-size: 10px;
+	cursor: pointer;
+
+	& .navbar-currency-select-menu-inactive {
+		display: none;
+	}
+
+	& .navbar-currency-select-menu-active {
+		border: none;
+		/* Group 630 */
+		position: absolute;
+		width: 114px;
+		overflow-y: scroll;
+		height: 120px;
+		left: 0;
+		top: 20px;
+		z-index: 3;
+
+		/* Shadow */
+		box-shadow: 0px 16px 35px rgba(168, 172, 176, 0.19);
+
+		& .navbar-currency-option {
+			/* Label */
+			font-weight: 500;
+			font-size: 18px;
+			line-height: 160%;
+
+			/* identical to box height, or 29px */
+			color: #1d1f22;
+			text-align: right;
+
+			/* Inside auto layout */
+			flex: none;
+			order: 0;
+			flex-grow: 0;
+			margin: 10px 40px 10px 20px;
+		}
+	}
+}
+.inactive-bg {
+	@extend .currency-container;
+	background: right no-repeat url('./icons/Vector.svg');
+}
+.active-bg {
+	@extend .currency-container;
+	background: right no-repeat url('./icons/Vector-up.svg');
+}
