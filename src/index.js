@@ -11,7 +11,7 @@ import Category from './pages/Category/Category.Component';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 const client = new ApolloClient({
-	uri: 'http://localhost:4000/',
+	uri: 'https://dhafer-e-commerce-react-app.herokuapp.com',
 	cache: new InMemoryCache(),
 });
 

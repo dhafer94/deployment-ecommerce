@@ -1,7 +1,7 @@
 {
 	"name": "e-commerce-app",
 	"version": "0.1.0",
-	"homepage": "https://dhafer94.github.io/deployment-ecommerce/",
+	"homepage": "https://e-commerce-deployment.netlify.app",
 	"private": true,
 	"dependencies": {
 		"@apollo/client": "^3.5.8",
