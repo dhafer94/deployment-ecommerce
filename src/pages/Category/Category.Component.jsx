@@ -6,39 +6,41 @@ import {
 	CurrencyContext,
 	DataFetchedContext,
 	ChosenCategoryContext,
+	HandleAddToCartContext,
 } from '../../contexts';
 import { withRouter } from '../../withRouter';
 
 class Category extends PureComponent {
-	constructor(props) {
-		super(props);
-	}
-
 	render() {
 		return (
 			<div className={'category-page'}>
-				<ChosenCategoryContext.Consumer>
-					{(category) => (
-						<DataFetchedContext.Consumer>
-							{(dataFetched) => (
-								<CurrencyContext.Consumer>
-									{(currency) => (
-										<CategoryProductsContext.Consumer>
-											{(products) => (
-												<Directory
-													currency={currency}
-													products={products}
-													dataFetched={dataFetched}
-													category={category}
-												/>
+				<HandleAddToCartContext.Consumer>
+					{(handleAddToCart) => (
+						<ChosenCategoryContext.Consumer>
+							{(category) => (
+								<DataFetchedContext.Consumer>
+									{(dataFetched) => (
+										<CurrencyContext.Consumer>
+											{(currency) => (
+												<CategoryProductsContext.Consumer>
+													{(products) => (
+														<Directory
+															handleAddToCart={handleAddToCart}
+															currency={currency}
+															products={products}
+															dataFetched={dataFetched}
+															category={category}
+														/>
+													)}
+												</CategoryProductsContext.Consumer>
 											)}
-										</CategoryProductsContext.Consumer>
+										</CurrencyContext.Consumer>
 									)}
-								</CurrencyContext.Consumer>
+								</DataFetchedContext.Consumer>
 							)}
-						</DataFetchedContext.Consumer>
+						</ChosenCategoryContext.Consumer>
 					)}
-				</ChosenCategoryContext.Consumer>
+				</HandleAddToCartContext.Consumer>
 			</div>
 		);
 	}

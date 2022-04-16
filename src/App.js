@@ -7,13 +7,13 @@ import { gql } from '@apollo/client';
 import {
 	CategoryProductsContext,
 	CurrencyContext,
-	AllDataContext,
 	DataFetchedContext,
 	ChosenCategoryContext,
 	HandleAddToCartContext,
 	HandleAttributeClickContext,
 	CartContext,
 	HandleIncrementDecrementContext,
+	HandleCartAttributesChangeContext
 } from './contexts';
 import { withRouter } from './withRouter';
 import { isEqual } from './isEqual';
@@ -106,11 +106,9 @@ class App extends PureComponent {
 			const productsToBeShown = this.state.allData.filter((category) => {
 				return category.name === this.props.router.params.plp && category.products;
 			})[0].products;
-			// console.log(products);
 
 			return this.setState({
 				productsToBeShown: productsToBeShown,
-				// products: products
 			});
 		}
 		if (this.props.router.location.pathname === '/') {
@@ -138,7 +136,6 @@ class App extends PureComponent {
 		const value = e.target.attributes.attributeval.nodeValue;
 		const type = e.target.attributes.type.nodeValue;
 		const id = e.target.id;
-		// console.log(type);
 
 		//to reset the previous active attribute/s and visually set the active attribute visually
 		if (e.target.className === 'product-attribute') {
@@ -184,34 +181,44 @@ class App extends PureComponent {
 	handleAddToCart = (e) => {
 		const { products, cart } = this.state;
 		const AddedProductId = e.target.id;
-		const chosenAttributes = this.state.chosenAttributes.filter((att) => att.id === AddedProductId);
+
 		const AddedProduct = products.find((product) => product.id === AddedProductId);
 		const { name, brand, prices, attributes, id, gallery } = AddedProduct;
 
+		//To add the chosen attributes when adding a product from pdp and choose first one as default when adding from plp
+		const chosenAttributes = e.target.attributes.btnname.value === 'pdp' ? this.state.chosenAttributes.filter((att) => att.id === AddedProductId) : attributes.map(att =>
+		({
+			id: id,
+			name: att.name,
+			value: att.items[0].value,
+			type: att.type
+		}));
 
-		const allAttributes = attributes.map(att => (
-			att.items.map(attr => (
+		const allAttributes = e.target.attributes.btnname.value === 'pdp' ? attributes.map(att => (
+			att.items.map((attr) => (
 				{
-					value: attr.value, id: AddedProductId,
+					id: AddedProductId,
 					name: att.name,
+					value: attr.value,
 					type: att.type,
 					selected: chosenAttributes.some(i => i.name === att.name && i.value === attr.value)
 				}))
-		));
+		)) : attributes.map(att =>
+			att.items.map((attr, i) =>
+			({
+				id: AddedProductId,
+				name: att.name,
+				value: attr.value,
+				type: att.type,
+				selected: i === 0 ? true : false
 
-
-		// console.log(allAttributes, 'allAttributes');
-		// console.log(chosenAttributes.map(item => console.log(item.name && item.value, 'item.name')));
+			})));
 		//To only add the product to the cart when attributes has been chosen
 		//a popup to choose the correct one can be shown to the user otherwise, in the meantime an alert is implemented
 		if (chosenAttributes.length === attributes.length) {
 			if (cart.length > 0) {
 				if (cart.some((item) => item.id === AddedProductId)) {
-					const matchingItems = cart.filter((item) => item.id === AddedProductId);
-					// const newAttributes = cart.map()
-
-
-					matchingItems.map(item => {
+					cart.forEach(item => {
 						if (isEqual(chosenAttributes, item.attributes)) {
 							this.setState({
 								cart: [
@@ -232,27 +239,47 @@ class App extends PureComponent {
 
 							});
 						} else {
-							this.setState({
-								cart: [
-									...cart.filter(item => item.id !== AddedProductId),
-									...cart.filter(item => item.id === AddedProductId && isEqual(chosenAttributes, item.attributes)),
-									...cart.filter(item => item.id === AddedProductId && !isEqual(chosenAttributes, item.attributes)),
+							const newItem = cart.filter(item => item.id === AddedProductId && isEqual(chosenAttributes, item.attributes));
+							if (newItem.length > 0) {
+								newItem.splice(0, 1, {
+									name: newItem[0].name,
+									brand: newItem[0].brand,
+									prices: newItem[0].prices,
+									id: newItem[0].id,
+									attributes: newItem[0].attributes,
+									quantity: newItem[0].quantity + 1,
+									gallery: newItem[0].gallery,
+									allAttributes: newItem[0].allAttributes,
+								});
+								this.setState({
+									cart: [
+										...cart.filter(item => item.id !== AddedProductId),
+										...cart.filter(item => item.id === AddedProductId && !isEqual(chosenAttributes, item.attributes)),
+										...newItem,
+									]
 
-									{
-										name: item.name,
-										brand: item.brand,
-										prices: item.prices,
-										id: item.id,
-										attributes: chosenAttributes,
-										quantity: 1,
-										gallery: item.gallery,
-										allAttributes: allAttributes,
-									}
+								});
+							}
+							if (newItem.length <= 0) {
+								newItem.splice(0, 0, {
+									name: name,
+									brand: brand,
+									prices: prices,
+									id: id,
+									attributes: chosenAttributes,
+									quantity: 1,
+									gallery: gallery,
+									allAttributes: allAttributes,
+								});
+								this.setState({
+									cart: [
+										...cart.filter(item => item.id !== AddedProductId),
+										...cart.filter(item => item.id === AddedProductId && !isEqual(chosenAttributes, item.attributes)),
+										...newItem,
+									]
 
-								]
-
-							});
-
+								});
+							}
 						}
 
 					});
@@ -295,17 +322,19 @@ class App extends PureComponent {
 		} else {
 			const chosenAttributesNames = chosenAttributes.filter((att) => att.id === AddedProductId).map((att) => att.name);
 			const notAddedAttributes = attributes.map(att => att.name).filter((attr) => !chosenAttributesNames.includes(attr));
-			if (notAddedAttributes.length === 1) {
-				const alert = notAddedAttributes.map(att => att);
-				window.alert(`Please select one of the available options for your ${name}:\n${alert.map((att) => ` ${att}`)
-					} `);
-			}
-			else {
-				const alert = notAddedAttributes.map(att => att);
-				window.alert(`Please select one of the available options for your ${name}:\n${alert.map((att) => ` ${att}`).slice(0, -1)} and ${alert[alert.length - 1]
-					} `);
-			}
-		};
+			if (e.target.attributes.btnname.value === 'pdp') {
+				if (notAddedAttributes.length === 1) {
+					const alert = notAddedAttributes.map(att => att);
+					window.alert(`Please select one of the available options for your ${name}:\n${alert.map((att) => ` ${att}`)
+						} `);
+				}
+				else {
+					const alert = notAddedAttributes.map(att => att);
+					window.alert(`Please select one of the available options for your ${name}:\n${alert.map((att) => ` ${att}`).slice(0, -1)} and ${alert[alert.length - 1]
+						} `);
+				}
+			};
+		}
 	};
 
 	//Listen to clicks anywhere on the page to control dropdown active, inactive state
@@ -355,9 +384,8 @@ class App extends PureComponent {
 	};
 
 	handleIncrementDecrement = (e, i) => {
-		const id = e.target.id;
 		const name = e.target.name;
-		const cart = this.state.cart;
+		const cart = [...this.state.cart];
 
 		if (i !== 'undefined') {
 			const item = cart[i];
@@ -408,12 +436,71 @@ class App extends PureComponent {
 		}
 	};
 
+	handleCartAttributesChange = (e, attr, attIndex, itemIndex) => {
+		const cart = [...this.state.cart];
+		const cartItem = cart[itemIndex];
+		const itemAttributes = [...cartItem.allAttributes[attIndex]];
+		const allAttributes = [...cartItem.allAttributes];
+		const newAttribute = itemAttributes.map(att =>
+		({
+			id: att.id,
+			name: att.name,
+			selected: attr.value === att.value && attr.name === att.name ? true : false,
+			type: att.type,
+			value: att.value,
+		})
+		);
+
+		allAttributes.splice(attIndex, 1, newAttribute);
+
+		const chosenAttributes = allAttributes.flat().map(attr => attr.selected ? ({
+			id: attr.id,
+			name: attr.name,
+			value: attr.value,
+			type: attr.type
+		}) : []).flat();
+
+		const clickedItem = cart.filter((item, i) => i === itemIndex);
+
+		const itemWithMatchingAttributesIndex = this.state.cart.findIndex(item => isEqual(item.allAttributes, allAttributes));
+
+		//to not duplicate the item if it is already exists in the bag and only add to its quantity
+		if (itemWithMatchingAttributesIndex >= 0) {
+			cart.splice(itemWithMatchingAttributesIndex, 1, {
+				name: clickedItem[0].name,
+				brand: clickedItem[0].brand,
+				prices: clickedItem[0].prices,
+				id: clickedItem[0].id,
+				attributes: chosenAttributes,
+				quantity: clickedItem[0].quantity + cart[itemWithMatchingAttributesIndex].quantity,
+				gallery: clickedItem[0].gallery,
+				allAttributes: allAttributes,
+			});
+			cart.splice(itemIndex, 1);
+		}
+		else {
+			cart.splice(itemIndex, 1, {
+				name: clickedItem[0].name,
+				brand: clickedItem[0].brand,
+				prices: clickedItem[0].prices,
+				id: clickedItem[0].id,
+				attributes: chosenAttributes,
+				quantity: clickedItem[0].quantity,
+				gallery: clickedItem[0].gallery,
+				allAttributes: allAttributes,
+			});
+		}
+		this.setState({ cart: [...cart] });
+
+	};
+
 	//to hide dropdown and cart overlay when clicking anywhere else on the page
 	resetter = (e) => {
 		const id = e.target.id;
 		const name = e.target.name;
 		const cartId = 'navbar-cart';
 		const currencyId = 'navbar-currency';
+
 		//Added cart-overlay id to all it's elements
 		const cartOverlayId = 'cart-overlay';
 
@@ -430,12 +517,11 @@ class App extends PureComponent {
 	};
 
 	render() {
-		const { productsToBeShown, currency, dataFetched, allData, dropdown, cart, chosenAttributes } = this.state;
+		const { productsToBeShown, currency, dataFetched, dropdown, cart } = this.state;
 		const chosenCategory = this.props.router.params.plp;
 		const selectedCurrency = dataFetched ? this.state.currency.filter(
 			(item) => item.selected === true,
 		) : [];
-		// console.log(selectedCurrency, 'selectedCurrency');
 
 		return (
 			<div
@@ -452,13 +538,13 @@ class App extends PureComponent {
 					handleClicksForDropDown={this.handleClicksForDropDown}
 					cart={cart}
 				/>
-				<HandleIncrementDecrementContext.Provider value={this.handleIncrementDecrement}>
-					<CartContext.Provider value={cart}>
-						<HandleAttributeClickContext.Provider value={this.handleAttributeClick}>
-							<HandleAddToCartContext.Provider value={this.handleAddToCart}>
-								<ChosenCategoryContext.Provider value={chosenCategory}>
-									<DataFetchedContext.Provider value={dataFetched}>
-										<AllDataContext.Provider value={allData}>
+				<HandleCartAttributesChangeContext.Provider value={this.handleCartAttributesChange}>
+					<HandleIncrementDecrementContext.Provider value={this.handleIncrementDecrement}>
+						<CartContext.Provider value={cart}>
+							<HandleAttributeClickContext.Provider value={this.handleAttributeClick}>
+								<HandleAddToCartContext.Provider value={this.handleAddToCart}>
+									<ChosenCategoryContext.Provider value={chosenCategory}>
+										<DataFetchedContext.Provider value={dataFetched}>
 											<CurrencyContext.Provider value={selectedCurrency}>
 												<CategoryProductsContext.Provider value={productsToBeShown}>
 													<div className={dropdown.cartOverlay === 'active' ? 'opacity' : 'normal'}>
@@ -468,16 +554,17 @@ class App extends PureComponent {
 														dropdown={dropdown.cartOverlay}
 														handleIncrementDecrement={this.handleIncrementDecrement}
 														currency={selectedCurrency}
-														cart={cart} />
+														cart={cart}
+														handleCartAttributesChange={this.handleCartAttributesChange} />
 												</CategoryProductsContext.Provider>
 											</CurrencyContext.Provider>
-										</AllDataContext.Provider>
-									</DataFetchedContext.Provider>
-								</ChosenCategoryContext.Provider>
-							</HandleAddToCartContext.Provider>
-						</HandleAttributeClickContext.Provider>
-					</CartContext.Provider>
-				</HandleIncrementDecrementContext.Provider>
+										</DataFetchedContext.Provider>
+									</ChosenCategoryContext.Provider>
+								</HandleAddToCartContext.Provider>
+							</HandleAttributeClickContext.Provider>
+						</CartContext.Provider>
+					</HandleIncrementDecrementContext.Provider>
+				</HandleCartAttributesChangeContext.Provider>
 			</div >
 		);
 	}

@@ -56,40 +56,53 @@ class CartProductCard extends PureComponent {
 	};
 
 	render() {
-		const { cart, currency, handleIncrementDecrement } = this.props;
+		const {
+			cart,
+			currency,
+			handleIncrementDecrement,
+			handleCartAttributesChange,
+		} = this.props;
 		const { image } = this.state;
 
 		return (
 			<div className='cart-products-container'>
 				{cart.length > 0 ? (
-					cart.map((item, i) => (
-						<div key={i} id={i} className='cart-product-card'>
+					cart.map((item, itemIndex) => (
+						<div key={itemIndex} id={itemIndex} className='cart-product-card'>
 							<div className='cart-product-left-container'>
-								<h3 key={i} className='cart-product-card-brand'>
+								<h3 key={itemIndex} className='cart-product-card-brand'>
 									{item.brand}
 								</h3>
-								<h3 key={i + 1000} className='cart-product-card-name'>
+								<h3 key={itemIndex + 1000} className='cart-product-card-name'>
 									{item.name}
 								</h3>
 								{item.prices.map((price) =>
 									currency.length > 0 &&
 									price.currency.label === currency[0].label ? (
-										<p key={i} className='cart-product-card-price'>
+										<p key={itemIndex} className='cart-product-card-price'>
 											{price.currency.symbol}
 											{price.amount}
 										</p>
 									) : null,
 								)}
 								<div
-									key={i + 20000}
+									key={itemIndex + 20000}
 									className='cart-product-card-attributes-main-container'>
 									<div
-										key={i}
+										key={itemIndex}
 										className='cart-product-card-attributes-text-container'>
-										{item.allAttributes.map((att, i) =>
+										{item.allAttributes.map((att, attIndex) =>
 											att.map((attr, i) =>
 												attr.type === 'text' ? (
 													<div
+														onClick={(e) =>
+															handleCartAttributesChange(
+																e,
+																attr,
+																attIndex,
+																itemIndex,
+															)
+														}
 														key={i}
 														className={
 															attr.selected
@@ -100,6 +113,14 @@ class CartProductCard extends PureComponent {
 													</div>
 												) : (
 													<div
+														onClick={(e) =>
+															handleCartAttributesChange(
+																e,
+																attr,
+																attIndex,
+																itemIndex,
+															)
+														}
 														key={i}
 														style={{ background: attr.value }}
 														className={
@@ -115,11 +136,11 @@ class CartProductCard extends PureComponent {
 							</div>
 
 							<div className='cart-product-right-container'>
-								<div key={i} className='cart-product-mid-container'>
+								<div key={itemIndex} className='cart-product-mid-container'>
 									<button
 										id={item.id}
 										name='increment'
-										onClick={(e) => handleIncrementDecrement(e, i)}
+										onClick={(e) => handleIncrementDecrement(e, itemIndex)}
 										className='cart-product-increment-decrement'>
 										+
 									</button>
@@ -127,14 +148,14 @@ class CartProductCard extends PureComponent {
 									<button
 										id={item.id}
 										name='decrement'
-										onClick={(e) => handleIncrementDecrement(e, i)}
+										onClick={(e) => handleIncrementDecrement(e, itemIndex)}
 										className='cart-product-increment-decrement'>
 										-
 									</button>
 								</div>
 								<div className='cart-product-img-container'>
 									<svg
-										id={i}
+										id={itemIndex}
 										onClick={(e) => this.handleChevronClick(e, item)}
 										name='left'
 										className='cart-product-img-chevron-left'
@@ -145,7 +166,7 @@ class CartProductCard extends PureComponent {
 										xmlns='http://www.w3.org/2000/svg'>
 										<path
 											name='left'
-											id={i}
+											id={itemIndex}
 											d='M1 13L7 7L1 1'
 											stroke='white'
 											strokeWidth='2'
@@ -157,7 +178,7 @@ class CartProductCard extends PureComponent {
 										className='cart-product-img'
 										src={
 											image.length > 0
-												? i === image[0].itemIndex
+												? itemIndex === image[0].itemIndex
 													? item.gallery[image[0].imgIndex]
 													: item.gallery[0]
 												: item.gallery[0]
@@ -165,9 +186,9 @@ class CartProductCard extends PureComponent {
 										alt={item.name}
 									/>
 									<svg
-										id={i}
+										id={itemIndex}
 										className='cart-product-img-chevron-right'
-										onClick={(e) => this.handleChevronClick(e, i)}
+										onClick={(e) => this.handleChevronClick(e, itemIndex)}
 										name='right'
 										width='8'
 										height='14'
@@ -175,7 +196,7 @@ class CartProductCard extends PureComponent {
 										fill='none'
 										xmlns='http://www.w3.org/2000/svg'>
 										<path
-											id={i}
+											id={itemIndex}
 											name='right'
 											d='M1 13L7 7L1 1'
 											stroke='white'

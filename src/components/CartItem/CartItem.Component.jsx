@@ -27,10 +27,14 @@ class CartItem extends PureComponent {
 		});
 	}
 
+	// handleAttributeClick = (e, attr) => {
+	// 	console.log(attr);
+	// };
+
 	render() {
 		const { allAttributes, item } = this.state;
-
-		// console.log(allAttributes);
+		const { handleCartAttributesChange, itemIndex } = this.props;
+		// console.log(itemIndex);
 
 		return (
 			<div
@@ -39,15 +43,18 @@ class CartItem extends PureComponent {
 				<div
 					id='cart-overlay'
 					className='cart-overlay-item-attributes-group-container'>
-					{allAttributes.map((att, i) => (
+					{allAttributes.map((att, attIndex) => (
 						<div
-							key={i}
+							key={attIndex}
 							id='cart-overlay'
 							className='cart-overlay-item-attributes-other-container'>
 							{att.map((attr, i) =>
 								attr.id === item.id ? (
 									attr.type === 'text' ? (
 										<div
+											onClick={(e) =>
+												handleCartAttributesChange(e, attr, attIndex, itemIndex)
+											}
 											key={i}
 											id='cart-overlay'
 											className={
@@ -66,15 +73,18 @@ class CartItem extends PureComponent {
 				<div
 					id='cart-overlay'
 					className='cart-overlay-item-attributes-group-container'>
-					{allAttributes.map((att, i) => (
+					{allAttributes.map((att, attIndex) => (
 						<div
-							key={i}
+							key={attIndex}
 							id='cart-overlay'
 							className='cart-overlay-item-attributes-swatch-container'>
 							{att.map((attr, i) =>
 								attr.id === item.id ? (
 									attr.type === 'swatch' ? (
 										<div
+											onClick={(e) =>
+												handleCartAttributesChange(e, attr, attIndex, itemIndex)
+											}
 											key={i}
 											id='cart-overlay'
 											className={

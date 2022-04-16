@@ -3,14 +3,10 @@
 	flex-direction: column;
 	flex-wrap: wrap;
 
-	// width: 50%;
 	& .cart-overlay-item-attributes-group-container {
 		& .cart-overlay-item-attributes-other-container {
 			display: flex;
 			flex-direction: row;
-			// align-items: flex-end;
-			// width: fit-content;
-			// margin: 0;
 
 			& .cart-overlay-item-attribute-box-selected {
 				background: #fff;
@@ -31,6 +27,7 @@
 				align-items: center;
 				margin-right: 10px;
 				margin-top: 5px;
+				cursor: pointer;
 			}
 
 			& .cart-overlay-item-attribute-box {

@@ -2,13 +2,6 @@ import React, { PureComponent } from 'react';
 import './Currency.styles.scss';
 
 class Currency extends PureComponent {
-	constructor(props) {
-		super(props);
-		this.state = {
-			// currency
-		};
-	}
-
 	render() {
 		const {
 			handleCurrencyClick,

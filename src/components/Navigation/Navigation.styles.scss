@@ -5,11 +5,8 @@
 	flex-wrap: nowrap;
 	justify-content: space-between;
 	/* top | horizontal | bottom */
-	padding: 1.8vh 8vw 8vh;
+	padding: 1.8vh 8vw 7vh;
 	z-index: 9;
-	// border: 1px solid #000;
-	// flex-direction: row;
-	// overflow-y: visible;
 
 	& .navbar-categories-links {
 		/* Navigation */
@@ -20,7 +17,6 @@
 		justify-content: space-between;
 		width: 14.6rem;
 		list-style: none;
-		// border: 1px solid #000;
 		text-decoration: none;
 
 		.navbar-categories-link {
@@ -78,7 +74,6 @@
 
 		& .navbar-cart {
 			/* Inside auto layout */
-			// position: relative;
 			flex: none;
 			order: 3;
 			flex-grow: 0;
@@ -97,7 +92,7 @@
 				width: 20px;
 				height: 20px;
 				position: absolute;
-				left: 85s.5%;
+				left: 85.5%;
 				right: 5%;
 				top: -1%;
 				color: #ffffff;

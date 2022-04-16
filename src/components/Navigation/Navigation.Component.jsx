@@ -1,18 +1,10 @@
 import React, { PureComponent } from 'react';
 import './Navigation.styles.scss';
 import Currency from '../Currency/Currency.Component';
-import CartOverlay from '../CartOverlay/CartOverlay.Component';
 import { NavLink } from 'react-router-dom';
 import { withRouter } from '../../withRouter';
 
 class Navigation extends PureComponent {
-	constructor(props) {
-		super(props);
-	}
-	// handleCartOverlay = (e) => {
-	// 	console.log(e);
-	// };
-
 	render() {
 		const {
 			currency,
@@ -22,9 +14,7 @@ class Navigation extends PureComponent {
 			selectedCurrency,
 			dropdown,
 			cartLength,
-			handleIncrementDecrement,
 			handleClicksForDropDown,
-			cart,
 		} = this.props;
 
 		return (

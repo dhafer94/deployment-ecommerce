@@ -45,6 +45,7 @@ class CartOverlay extends PureComponent {
 			handleIncrementDecrement,
 			dropdown,
 			handleClicksForDropDown,
+			handleCartAttributesChange,
 		} = this.props;
 		const { totalPrice } = this.state;
 		// const allAttributes = cart.map((item) => item.allAttributes).flat(1);
@@ -106,6 +107,10 @@ class CartOverlay extends PureComponent {
 												<CartItemComponent
 													item={item}
 													allAttributes={item.allAttributes}
+													handleCartAttributesChange={
+														handleCartAttributesChange
+													}
+													itemIndex={i}
 												/>
 											</div>
 											<div

@@ -6,34 +6,38 @@ import {
 	CartContext,
 	CurrencyContext,
 	HandleIncrementDecrementContext,
+	HandleCartAttributesChangeContext,
 } from '../../contexts';
 
 class Cart extends PureComponent {
-	constructor(props) {
-		super(props);
-	}
-
 	render() {
 		return (
 			<div className={'cart'}>
 				<h2 className='cart-title'>Cart</h2>
-				<HandleIncrementDecrementContext.Consumer>
-					{(handleIncrementDecrement) => (
-						<CartContext.Consumer>
-							{(cart) => (
-								<CurrencyContext.Consumer>
-									{(currency) => (
-										<CartProductCard
-											handleIncrementDecrement={handleIncrementDecrement}
-											currency={currency}
-											cart={cart}
-										/>
+				<HandleCartAttributesChangeContext.Consumer>
+					{(handleCartAttributesChange) => (
+						<HandleIncrementDecrementContext.Consumer>
+							{(handleIncrementDecrement) => (
+								<CartContext.Consumer>
+									{(cart) => (
+										<CurrencyContext.Consumer>
+											{(currency) => (
+												<CartProductCard
+													handleCartAttributesChange={
+														handleCartAttributesChange
+													}
+													handleIncrementDecrement={handleIncrementDecrement}
+													currency={currency}
+													cart={cart}
+												/>
+											)}
+										</CurrencyContext.Consumer>
 									)}
-								</CurrencyContext.Consumer>
+								</CartContext.Consumer>
 							)}
-						</CartContext.Consumer>
+						</HandleIncrementDecrementContext.Consumer>
 					)}
-				</HandleIncrementDecrementContext.Consumer>
+				</HandleCartAttributesChangeContext.Consumer>
 			</div>
 		);
 	}
