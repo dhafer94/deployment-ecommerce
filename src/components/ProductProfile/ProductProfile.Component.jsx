@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react';
 import './ProductProfile.styles.scss';
+import Attribute from '../Attribute/Attribute.Component';
+import AddToCartButton from '../AddToCartButton/AddToCartButton.Component';
 import { withRouter } from '../../withRouter';
 import parse from 'html-react-parser';
 import { gql } from '@apollo/client';
@@ -142,61 +144,12 @@ class ProductProfile extends PureComponent {
 							<div className='product-box'>
 								<h2 className='product-brand'>{brand}</h2>
 								<p className='product-name'>{name}</p>
-								{typeof attributes !== 'undefined' &&
-									attributes.map((attribute, i) =>
-										attribute.type === 'swatch' ? (
-											<div className='product-attribute-container' key={i}>
-												<p
-													key={i + 10}
-													className='product-attribute-name'>{`${attributes[i].name}:`}</p>
-												<div key={i} className='product-attributes-box'>
-													{attribute.items.map((item, index) => (
-														<div
-															attribute={attribute.name}
-															attributeval={item.value}
-															type={attribute.type}
-															id={id}
-															onClick={(e) => handleAttributeClick(e)}
-															style={{
-																background: `${item.value}`,
-																width: '63px',
-																height: '45px',
-															}}
-															className={
-																inStock
-																	? 'product-attribute-swatch'
-																	: 'product-attribute-out-of-stock'
-															}
-															key={index}></div>
-													))}
-												</div>
-											</div>
-										) : (
-											<div className='product-attribute-container' key={i + 20}>
-												<p
-													key={i + 10}
-													className='product-attribute-name'>{`${attributes[i].name}:`}</p>
-												<div key={i} className='product-attributes-box'>
-													{attribute.items.map((item, index) => (
-														<p
-															attribute={attribute.name}
-															attributeval={item.value}
-															type={attribute.type}
-															id={id}
-															onClick={(e) => handleAttributeClick(e)}
-															className={
-																inStock
-																	? 'product-attribute'
-																	: 'product-attribute-out-of-stock'
-															}
-															key={index}>
-															{item.value}
-														</p>
-													))}
-												</div>
-											</div>
-										),
-									)}
+								<Attribute
+									inStock={inStock}
+									id={id}
+									handleAttributeClick={handleAttributeClick}
+									attributes={attributes}
+								/>
 								<p className='product-price-title'>price:</p>
 								{typeof prices !== 'undefined' &&
 									currency.length > 0 &&
@@ -208,19 +161,18 @@ class ProductProfile extends PureComponent {
 												</p>
 											),
 									)}
-								{inStock ? (
-									<button
-										btnname='pdp'
-										onClick={this.props.handleAddToCart}
-										id={id}
-										className='add-to-cart-btn'>
-										Add to Cart
-									</button>
-								) : (
+								{/* {inStock ? ( */}
+								<AddToCartButton
+									btnname='pdp'
+									inStock={inStock}
+									handleAddToCart={this.props.handleAddToCart}
+									id={id}
+								/>
+								{/* ) : (
 									<button className='add-to-cart-btn-inactive'>
 										out of stock
 									</button>
-								)}
+								)} */}
 								{description.length > 250 ? (
 									<div
 										id='product-description-box'

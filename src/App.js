@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import './App.scss';
 import Navigation from './components/Navigation/Navigation.Component';
 import CartOverlay from './components/CartOverlay/CartOverlay.Component';
+import AttributesPopup from './components/AttributesPopup/AttributesPopup.Component';
 import { Outlet } from 'react-router-dom';
 import { gql } from '@apollo/client';
 import {
@@ -13,7 +14,8 @@ import {
 	HandleAttributeClickContext,
 	CartContext,
 	HandleIncrementDecrementContext,
-	HandleCartAttributesChangeContext
+	HandleCartAttributesChangeContext,
+	HandleAttributesPopupContext
 } from './contexts';
 import { withRouter } from './withRouter';
 import { isEqual } from './isEqual';
@@ -30,10 +32,13 @@ class App extends PureComponent {
 			dataFetched: false,
 			dropdown: {
 				currency: 'inactive',
-				cartOverlay: 'inactive'
+				cartOverlay: 'inactive',
 			},
 			chosenAttributes: [],
-			cart: []
+			cart: [],
+			attributesPopup: false,
+			popupProduct: []
+
 		};
 	}
 
@@ -185,36 +190,23 @@ class App extends PureComponent {
 		const AddedProduct = products.find((product) => product.id === AddedProductId);
 		const { name, brand, prices, attributes, id, gallery } = AddedProduct;
 
-		//To add the chosen attributes when adding a product from pdp and choose first one as default when adding from plp
-		const chosenAttributes = e.target.attributes.btnname.value === 'pdp' ? this.state.chosenAttributes.filter((att) => att.id === AddedProductId) : attributes.map(att =>
-		({
-			id: id,
-			name: att.name,
-			value: att.items[0].value,
-			type: att.type
-		}));
+		//To add the chosen attributes
+		const chosenAttributes = this.state.chosenAttributes.filter((att) => att.id === AddedProductId);
 
-		const allAttributes = e.target.attributes.btnname.value === 'pdp' ? attributes.map(att => (
-			att.items.map((attr) => (
-				{
-					id: AddedProductId,
-					name: att.name,
-					value: attr.value,
-					type: att.type,
-					selected: chosenAttributes.some(i => i.name === att.name && i.value === attr.value)
-				}))
-		)) : attributes.map(att =>
-			att.items.map((attr, i) =>
-			({
-				id: AddedProductId,
-				name: att.name,
-				value: attr.value,
-				type: att.type,
-				selected: i === 0 ? true : false
+		const allAttributes =
+			attributes.map(att => (
+				att.items.map((attr) => (
+					{
+						id: AddedProductId,
+						name: att.name,
+						value: attr.value,
+						type: att.type,
+						selected: chosenAttributes.some(i => i.name === att.name && i.value === attr.value)
+					}))
+			));
 
-			})));
 		//To only add the product to the cart when attributes has been chosen
-		//a popup to choose the correct one can be shown to the user otherwise, in the meantime an alert is implemented
+		//a popup or style change to choose the correct one can be shown to the user otherwise, in the meantime an alert is implemented
 		if (chosenAttributes.length === attributes.length) {
 			if (cart.length > 0) {
 				if (cart.some((item) => item.id === AddedProductId)) {
@@ -256,8 +248,8 @@ class App extends PureComponent {
 										...cart.filter(item => item.id !== AddedProductId),
 										...cart.filter(item => item.id === AddedProductId && !isEqual(chosenAttributes, item.attributes)),
 										...newItem,
-									]
-
+									],
+									attributesPopup: false,
 								});
 							}
 							if (newItem.length <= 0) {
@@ -276,8 +268,8 @@ class App extends PureComponent {
 										...cart.filter(item => item.id !== AddedProductId),
 										...cart.filter(item => item.id === AddedProductId && !isEqual(chosenAttributes, item.attributes)),
 										...newItem,
-									]
-
+									],
+									attributesPopup: false,
 								});
 							}
 						}
@@ -298,8 +290,10 @@ class App extends PureComponent {
 								gallery: gallery,
 								allAttributes: allAttributes
 							}
-						]
-					});
+						],
+						attributesPopup: false,
+					}
+					);
 				}
 			}
 			else {
@@ -315,26 +309,29 @@ class App extends PureComponent {
 							quantity: 1,
 							gallery: gallery,
 							allAttributes: allAttributes
-						}]
+						}],
+					attributesPopup: false,
+
 				});
 			}
 
 		} else {
+			// console.log('yes');
 			const chosenAttributesNames = chosenAttributes.filter((att) => att.id === AddedProductId).map((att) => att.name);
 			const notAddedAttributes = attributes.map(att => att.name).filter((attr) => !chosenAttributesNames.includes(attr));
-			if (e.target.attributes.btnname.value === 'pdp') {
-				if (notAddedAttributes.length === 1) {
-					const alert = notAddedAttributes.map(att => att);
-					window.alert(`Please select one of the available options for your ${name}:\n${alert.map((att) => ` ${att}`)
-						} `);
-				}
-				else {
-					const alert = notAddedAttributes.map(att => att);
-					window.alert(`Please select one of the available options for your ${name}:\n${alert.map((att) => ` ${att}`).slice(0, -1)} and ${alert[alert.length - 1]
-						} `);
-				}
-			};
-		}
+			// if (e.target.attributes.btnname.value === 'pdp') {
+			if (notAddedAttributes.length === 1) {
+				const alert = notAddedAttributes.map(att => att);
+				window.alert(`Please select one of the available options for your ${name}:\n${alert.map((att) => ` ${att}`)
+					} `);
+			}
+			else {
+				const alert = notAddedAttributes.map(att => att);
+				window.alert(`Please select one of the available options for your ${name}:\n${alert.map((att) => ` ${att}`).slice(0, -1)} and ${alert[alert.length - 1]
+					} `);
+			}
+		};
+
 	};
 
 	//Listen to clicks anywhere on the page to control dropdown active, inactive state
@@ -494,6 +491,35 @@ class App extends PureComponent {
 
 	};
 
+	handleAttributesPopup = (e) => {
+		const currentCategory = this.props.router.params.plp;
+		const id = e.target.id;
+
+		const product = this.state.allData
+			.filter((category) => category.name === currentCategory)[0]
+			.products.filter((i) => i.id === id);
+
+		if (e.target.attributes.btnname.value === 'x') {
+			this.setState({
+				attributesPopup: false,
+			});
+		}
+		if (e.target.attributes.btnname.value === 'plp') {
+			// To Add the product immediately if it has no attributes
+			if (product[0].attributes.length <= 0) {
+				this.handleAddToCart(e);
+			} else {
+				// to pass the product to the popup for further rendering
+				this.setState({
+					attributesPopup: !this.state.attributesPopup,
+					popupProduct: product
+				});
+
+			}
+
+		}
+	};
+
 	//to hide dropdown and cart overlay when clicking anywhere else on the page
 	resetter = (e) => {
 		const id = e.target.id;
@@ -516,17 +542,15 @@ class App extends PureComponent {
 		}
 	};
 
+
 	render() {
-		const { productsToBeShown, currency, dataFetched, dropdown, cart } = this.state;
+		const { productsToBeShown, currency, dataFetched, dropdown, cart, attributesPopup, popupProduct } = this.state;
 		const chosenCategory = this.props.router.params.plp;
 		const selectedCurrency = dataFetched ? this.state.currency.filter(
 			(item) => item.selected === true,
 		) : [];
-
 		return (
-			<div
-				onClick={this.resetter}
-				className='App'				>
+			<div onClick={this.resetter} className='App'>
 				<Navigation
 					categoriesNames={this.state.categoriesNames}
 					currency={currency}
@@ -538,34 +562,42 @@ class App extends PureComponent {
 					handleClicksForDropDown={this.handleClicksForDropDown}
 					cart={cart}
 				/>
-				<HandleCartAttributesChangeContext.Provider value={this.handleCartAttributesChange}>
-					<HandleIncrementDecrementContext.Provider value={this.handleIncrementDecrement}>
-						<CartContext.Provider value={cart}>
-							<HandleAttributeClickContext.Provider value={this.handleAttributeClick}>
-								<HandleAddToCartContext.Provider value={this.handleAddToCart}>
-									<ChosenCategoryContext.Provider value={chosenCategory}>
-										<DataFetchedContext.Provider value={dataFetched}>
-											<CurrencyContext.Provider value={selectedCurrency}>
-												<CategoryProductsContext.Provider value={productsToBeShown}>
-													<div className={dropdown.cartOverlay === 'active' ? 'opacity' : 'normal'}>
+				<HandleAttributesPopupContext.Provider value={this.handleAttributesPopup}>
+					<HandleCartAttributesChangeContext.Provider value={this.handleCartAttributesChange}>
+						<HandleIncrementDecrementContext.Provider value={this.handleIncrementDecrement}>
+							<CartContext.Provider value={cart}>
+								<HandleAttributeClickContext.Provider value={this.handleAttributeClick}>
+									<HandleAddToCartContext.Provider value={this.handleAddToCart}>
+										<ChosenCategoryContext.Provider value={chosenCategory}>
+											<DataFetchedContext.Provider value={dataFetched}>
+												<CurrencyContext.Provider value={selectedCurrency}>
+													<CategoryProductsContext.Provider value={productsToBeShown}>
 														<Outlet />
-													</div>
-													<CartOverlay
-														dropdown={dropdown.cartOverlay}
-														handleIncrementDecrement={this.handleIncrementDecrement}
-														currency={selectedCurrency}
-														cart={cart}
-														handleCartAttributesChange={this.handleCartAttributesChange} />
-												</CategoryProductsContext.Provider>
-											</CurrencyContext.Provider>
-										</DataFetchedContext.Provider>
-									</ChosenCategoryContext.Provider>
-								</HandleAddToCartContext.Provider>
-							</HandleAttributeClickContext.Provider>
-						</CartContext.Provider>
-					</HandleIncrementDecrementContext.Provider>
-				</HandleCartAttributesChangeContext.Provider>
-			</div >
+														<CartOverlay
+															dropdown={dropdown.cartOverlay}
+															handleIncrementDecrement={this.handleIncrementDecrement}
+															currency={selectedCurrency}
+															cart={cart}
+															handleCartAttributesChange={this.handleCartAttributesChange} />
+														{attributesPopup && dataFetched ?
+															<AttributesPopup
+																handleAttributesPopup={this.handleAttributesPopup}
+																product={popupProduct}
+																handleAddToCart={this.handleAddToCart}
+																handleAttributeClick={this.handleAttributeClick}
+																attributesPopup={attributesPopup}
+															/> : null}
+													</CategoryProductsContext.Provider>
+												</CurrencyContext.Provider>
+											</DataFetchedContext.Provider>
+										</ChosenCategoryContext.Provider>
+									</HandleAddToCartContext.Provider>
+								</HandleAttributeClickContext.Provider>
+							</CartContext.Provider>
+						</HandleIncrementDecrementContext.Provider>
+					</HandleCartAttributesChangeContext.Provider>
+				</HandleAttributesPopupContext.Provider>
+			</ div >
 		);
 	}
 }

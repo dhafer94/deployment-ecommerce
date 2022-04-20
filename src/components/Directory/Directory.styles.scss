@@ -6,15 +6,10 @@
 	font-size: 40px;
 	line-height: 160%;
 	text-transform: capitalize;
-
-	/* identical to box height, or 67px */
-
 	display: flex;
 	align-items: center;
-
-	/* --c-text */
 	color: #1d1f22;
-	margin: 0 8vw 5vh;
+	margin: 0 10vw 5vh;
 }
 .directory-container {
 	display: grid;
@@ -22,6 +17,6 @@
 	justify-content: center;
 	text-align: center;
 	gap: 40px;
-	margin: 0 8vw;
+	margin: 0 10vw;
 	align-self: right;
 }

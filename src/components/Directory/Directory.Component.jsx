@@ -2,11 +2,11 @@ import React, { PureComponent } from 'react';
 import './Directory.styles.scss';
 import ProductCard from '../ProductCard/ProductCard.Component';
 import { withRouter } from '../../withRouter';
+import { HandleAttributesPopupContext } from '../../contexts';
 
 class Directory extends PureComponent {
 	render() {
-		const { currency, products, dataFetched, category, handleAddToCart } =
-			this.props;
+		const { currency, products, dataFetched, category } = this.props;
 
 		return (
 			<>
@@ -15,13 +15,17 @@ class Directory extends PureComponent {
 					{dataFetched ? (
 						products.map((product, i) => {
 							return (
-								<ProductCard
-									handleAddToCart={handleAddToCart}
-									category={category}
-									currency={currency}
-									key={i}
-									product={product}
-								/>
+								<HandleAttributesPopupContext.Consumer key={i}>
+									{(handleAttributesPopup) => (
+										<ProductCard
+											handleAttributesPopup={handleAttributesPopup}
+											category={category}
+											currency={currency}
+											key={i}
+											product={product}
+										/>
+									)}
+								</HandleAttributesPopupContext.Consumer>
 							);
 						})
 					) : (

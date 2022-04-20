@@ -18,6 +18,9 @@ export const CartContext = React.createContext();
 
 export const HandleIncrementDecrementContext = React.createContext();
 
+export const HandleAttributesPopupContext = React.createContext();
+
+
 
 
 

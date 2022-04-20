@@ -22,12 +22,8 @@ class ProductCard extends PureComponent {
 		}));
 	};
 
-	// handleAddToCart = (e) => {
-	// 	console.log(e.target.attributes.btnname.value);
-	// };
-
 	render() {
-		const { currency, product, category, handleAddToCart } = this.props;
+		const { currency, product, category, handleAttributesPopup } = this.props;
 		const { id, name, gallery, prices, inStock } = product;
 		const { isHovering } = this.state;
 		const img = gallery[0];
@@ -69,7 +65,7 @@ class ProductCard extends PureComponent {
 							btnname='plp'
 							id={id}
 							className='product-card-cart'
-							onClick={handleAddToCart}
+							onClick={handleAttributesPopup}
 						/>
 					) : (
 						<div id={id} className='product-card-cart' />

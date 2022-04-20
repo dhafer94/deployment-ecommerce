@@ -1,0 +1,60 @@
+.product-attribute-container {
+	& .product-attribute-name {
+		font-family: 'Roboto Condensed';
+		margin: 0;
+		margin-bottom: 10px;
+		text-transform: uppercase;
+		height: 18px;
+		font-weight: 700;
+		font-size: 18px;
+		line-height: 18px;
+	}
+
+	& .product-attributes-box {
+		display: flex;
+		flex-direction: row;
+		& .product-attribute {
+			margin: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border: 1px solid #1d1f22;
+			cursor: pointer;
+			box-sizing: border-box;
+			margin-right: 12px;
+			width: 63px;
+			height: 45px;
+			font-family: 'Source Sans Pro';
+			font-style: normal;
+			font-weight: 400;
+			font-size: 16px;
+			line-height: 18px;
+			display: flex;
+			align-items: center;
+			text-align: center;
+			letter-spacing: 0.05em;
+			margin-bottom: 15px;
+		}
+
+		& .product-attribute-active {
+			@extend .product-attribute;
+			background: #1d1f22;
+			color: #fff;
+		}
+
+		& .product-attribute-swatch {
+			@extend .product-attribute;
+		}
+
+		& .product-attribute-swatch-active {
+			@extend .product-attribute-swatch;
+			border: 3px solid #5ece7b;
+		}
+
+		& .product-attribute-out-of-stock {
+			@extend .product-attribute;
+			opacity: 0.5;
+			cursor: auto;
+		}
+	}
+}

@@ -23,16 +23,13 @@
 		box-shadow: 0px 16px 35px rgba(168, 172, 176, 0.19);
 
 		& .navbar-currency-option {
-			/* Label */
 			font-weight: 500;
 			font-size: 18px;
 			line-height: 160%;
 
-			/* identical to box height, or 29px */
 			color: #1d1f22;
 			text-align: right;
 
-			/* Inside auto layout */
 			flex: none;
 			order: 0;
 			flex-grow: 0;
