@@ -11,7 +11,7 @@ import Category from './pages/Category/Category.Component';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 const client = new ApolloClient({
-    uri: 'https://git.heroku.com/dx-ecommerce.git',
+    uri: 'https://dx-ecommerce-297c91e65260.herokuapp.com/',
     // uri: 'http://localhost:4000/',
     cache: new InMemoryCache(),
 });
